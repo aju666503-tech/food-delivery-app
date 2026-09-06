@@ -72,5 +72,4 @@ if __name__ == "__main__":
     app_view = AppView(root)
     controller = AppController(app_view)
     root.mainloop()
-
-#burger
+#burgir
