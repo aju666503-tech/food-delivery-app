@@ -1,11 +1,8 @@
 from abc import ABC, abstractmethod
 
-# ---------------------------------------------------------
-# 1. Abstraction & Inheritance (Customer Management Module)
-# ---------------------------------------------------------
 class User(ABC):
     def __init__(self, name):
-        self._name = name  # Encapsulation
+        self._name = name  
 
     @property
     def name(self):
@@ -28,36 +25,40 @@ class Customer(User):
         return "Customer"
 
 
-# ---------------------------------------------------------
-# 2. Encapsulation (Menu & Order Processing Modules)
-# ---------------------------------------------------------
 class FoodOrder:
     MENU = {"Burger": 150.0, "Fries": 80.0, "Wings": 220.0, "Latte": 180.0}
 
-    def __init__(self, customer=None): # Allow empty initialization
+    def __init__(self, customer=None): 
         self._customer = customer
-        self._items = []
+        self._items = {}  # Changed to a dictionary to track quantities
         self.status = "Pending"
+        self.payment_method = None
+        self.time_left = 0
+        self.receipt = None 
 
     def add_item(self, item_name):
         if item_name in self.MENU:
-            self._items.append(item_name)
+            self._items[item_name] = self._items.get(item_name, 0) + 1
+
+    def remove_item(self, item_name):
+        if item_name in self._items:
+            self._items[item_name] -= 1
+            if self._items[item_name] <= 0:
+                del self._items[item_name]
 
     @property
     def total(self):
-        return sum(self.MENU[i] for i in self._items)
+        return sum(self.MENU[item] * qty for item, qty in self._items.items())
 
     @property
     def customer(self):
         return self._customer
 
     @customer.setter
-    def customer(self, new_customer): # Allows setting customer at checkout
+    def customer(self, new_customer): 
         self._customer = new_customer
 
-# ---------------------------------------------------------
-# 3. Polymorphism (Payment & Delivery Module)
-# ---------------------------------------------------------
+
 class Payment(ABC):
     @abstractmethod
     def process(self, amount):
@@ -69,6 +70,4 @@ class CashPayment(Payment):
 
 class CardPayment(Payment):
     def process(self, amount):
-        return f"Paid ₱{amount:.2f} via Credit Card." 
-    
-    
+        return f"Paid ₱{amount:.2f} via Credit Card."
