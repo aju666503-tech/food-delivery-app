@@ -24,13 +24,12 @@ class Customer(User):
     def get_role(self):
         return "Customer"
 
-
 class FoodOrder:
     MENU = {"Burger": 150.0, "Fries": 80.0, "Wings": 220.0, "Latte": 180.0}
 
     def __init__(self, customer=None): 
         self._customer = customer
-        self._items = {}  # Changed to a dictionary to track quantities
+        self._items = {}  
         self.status = "Pending"
         self.payment_method = None
         self.time_left = 0
@@ -58,7 +57,6 @@ class FoodOrder:
     def customer(self, new_customer): 
         self._customer = new_customer
 
-
 class Payment(ABC):
     @abstractmethod
     def process(self, amount):
@@ -66,7 +64,7 @@ class Payment(ABC):
 
 class CashPayment(Payment):
     def process(self, amount):
-        return f"Paid ₱{amount:.2f} via Cash on Delivery."
+        return f"To be paid ₱{amount:.2f} via Cash on Delivery."
 
 class CardPayment(Payment):
     def process(self, amount):

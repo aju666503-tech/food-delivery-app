@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from models import Customer, FoodOrder, CashPayment, CardPayment
-from views import AppView
+from views import AppView, HoverButton, BTN_MENU, BTN_MENU_HOVER, BTN_DANGER, BTN_DANGER_HOVER
 
 class AppController:
     def __init__(self, view):
@@ -9,15 +9,18 @@ class AppController:
         self.current_order = FoodOrder() 
         self.all_orders = []
 
+        # Populate UI Menu with modern HoverButtons
         for item_name, price in FoodOrder.MENU.items():
-            btn = tk.Button(
+            btn = HoverButton(
                 self.view.menu_frame, 
-                text=f"{item_name} - ₱{price:.2f}", 
-                bg="#AED6F1", 
-                font=("Segoe UI", 9, "bold"),
+                bg_color=BTN_MENU, 
+                hover_color=BTN_MENU_HOVER,
+                text=f"{item_name}  —  ₱{price:.2f}", 
+                fg="#0F172A", 
+                font=("Segoe UI", 10, "bold"),
                 command=lambda name=item_name: self.add_to_cart(name)
             )
-            btn.pack(fill=tk.X, pady=2)
+            btn.pack(fill=tk.X, pady=4, ipady=4)
 
         self.view.btn_checkout.config(command=self.prompt_checkout)
         self.view.btn_verify.config(command=self.verify_payment)
@@ -36,20 +39,19 @@ class AppController:
         self.update_cart_ui()
 
     def update_cart_ui(self):
-        # Clear existing rows in the cart frame
         for widget in self.view.cart_frame.winfo_children():
             widget.destroy()
             
-        # Repopulate with updated dictionary data
         for item, qty in self.current_order._items.items():
-            row = tk.Frame(self.view.cart_frame, bg="white")
-            row.pack(fill=tk.X, pady=2, padx=5)
+            row = tk.Frame(self.view.cart_frame, bg="#FFFFFF")
+            row.pack(fill=tk.X, pady=2, padx=10)
             
-            lbl = tk.Label(row, text=f"{item} ({qty})", bg="white", fg="#2C3E50", font=("Segoe UI", 10))
-            lbl.pack(side=tk.LEFT)
+            lbl = tk.Label(row, text=f"{item} ({qty})", bg="#FFFFFF", fg="#0F172A", font=("Segoe UI", 10, "bold"))
+            lbl.pack(side=tk.LEFT, pady=5)
             
-            btn_minus = tk.Button(row, text="-", bg="#E74C3C", fg="white", font=("Segoe UI", 8, "bold"), width=3,
-                                  command=lambda i=item: self.remove_from_cart(i))
+            btn_minus = HoverButton(row, bg_color=BTN_DANGER, hover_color=BTN_DANGER_HOVER, 
+                                    text="—", fg="white", font=("Segoe UI", 8, "bold"), width=3,
+                                    command=lambda i=item: self.remove_from_cart(i))
             btn_minus.pack(side=tk.RIGHT)
 
         self.view.lbl_total.config(text=f"₱{self.current_order.total:.2f}")
